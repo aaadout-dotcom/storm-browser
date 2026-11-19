@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Storm Trailer</title>
+<style>
+  :root { --bg:#05060B; --text:#EAF2FF; --sub:#8C9BB5; --accent:#4FA8FF; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; overflow:hidden; }
+  #wrap { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#000; }
+  canvas { width:100vw; height:56.25vw; max-height:100vh; max-width:177.78vh; display:block; }
+  #ui { position:fixed; left:50%; bottom:28px; transform:translateX(-50%); display:flex; gap:10px; z-index:2; transition:opacity .4s; }
+  #ui.hide { opacity:0; pointer-events:none; }
+  button { font:600 15px 'Segoe UI',sans-serif; color:#fff; background:rgba(79,168,255,.18); border:1px solid rgba(79,168,255,.6); border-radius:22px; padding:11px 20px; cursor:pointer; backdrop-filter:blur(6px); }
+  button:hover { background:var(--accent); }
+  #status { position:fixed; top:16px; left:50%; transform:translateX(-50%); font-size:13px; color:var(--sub); z-index:2; }
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c" width="1920" height="1080"></canvas></div>
+<div id="status"></div>
+<div id="ui">
+  <button id="play">▶ Play trailer</button>
+  <button id="rec">⏺ Record video (.webm)</button>
+  <button id="fs">⛶ Full screen</button>
+</div>
+<script>
+// =====================================================================
+//  STORM, trailer. Everything here is drawn and synthesized live:
+//  no stock footage, no licensed music. ~44 seconds at 1920×1080.
+// =====================================================================
+const W = 1920, H = 1080, DURATION = 44;
+const cv = document.getElementById('c'), g = cv.getContext('2d');
+const C = { accent:'#4FA8FF', bolt:'#9FD4FF', glow:'#4FA8FF', text:'#EAF2FF', sub:'#8C9BB5', top:'#0B1A33', bottom:'#05060B', panel:'#141A28', onion:'#B98CFF', red:'#FF4F6A', green:'#3DDC97', gold:'#FFB347' };
+const DOWNLOAD_TEXT = 'Free for Windows · aaadout-dotcom.github.io/storm-browser';           // change to your website address once it's live
+
+const img = s => { const i = new Image(); i.src = s; return i; };
+const shotStart = img('shot-start.png'), shotAi = img('shot-ai.png'), icon = img('icon.png');
+
+// ---------- helpers ----------
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const ease = t => 1 - Math.pow(1 - clamp(t), 3);
+const easeIO = t => { t = clamp(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+const seg = (t, a, b) => clamp((t - a) / (b - a));           // 0..1 progress inside [a,b]
+const fadeInOut = (t, a, b, f = .45) => Math.min(seg(t, a, a + f), 1 - seg(t, b - f, b));
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+function text(s, x, y, size, opts = {}) {
+  g.save();
+  g.font = `${opts.weight || 700} ${size}px ${opts.font || "'Segoe UI', system-ui, sans-serif"}`;
+  g.textAlign = opts.align || 'center'; g.textBaseline = 'middle';
+  g.globalAlpha *= opts.alpha ?? 1;
+  if (opts.glow) { g.shadowColor = opts.glow; g.shadowBlur = opts.blur || 40; }
+  g.fillStyle = opts.color || C.text;
+  if (opts.spacing) { g.letterSpacing = opts.spacing + 'px'; }
+  g.fillText(s, x, y);
+  g.restore();
+}
+
+function roundRect(x, y, w, h, r) { g.beginPath(); g.roundRect(x, y, w, h, r); }
+
+function sky(dim = 1) {
+  const gr = g.createLinearGradient(0, 0, 0, H);
+  gr.addColorStop(0, C.top); gr.addColorStop(1, C.bottom);
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  if (dim < 1) { g.fillStyle = `rgba(0,0,0,${1 - dim})`; g.fillRect(0, 0, W, H); }
+}
+
+// ---------- rain ----------
+const drops = Array.from({ length: 420 }, () => ({ x: rnd() * (W + 300), y: rnd() * H, l: 14 + rnd() * 26, s: 1100 + rnd() * 900, a: .15 + rnd() * .45 }));
+function rain(t, amount = 1) {
+  g.save(); g.strokeStyle = '#B4D2FF'; g.lineWidth = 1.4;
+  for (let i = 0; i < drops.length * amount; i++) {
+    const d = drops[i]; const y = (d.y + t * d.s) % (H + 60) - 30; const x = d.x - ((t * d.s * .18) % (W + 300)) ;
+    const xx = ((x % (W + 300)) + W + 300) % (W + 300) - 150;
+    g.globalAlpha = d.a; g.beginPath(); g.moveTo(xx, y); g.lineTo(xx - d.l * .18, y + d.l); g.stroke();
+  }
+  g.restore();
+}
+
+// ---------- lightning ----------
+function makeBolt(x0, y0, x1, y1, thick, depth = 0, s = 1) {
+  let pts = [[x0, y0], [x1, y1]], disp = Math.hypot(x1 - x0, y1 - y0) * .22;
+  for (let pass = 0; pass < 7; pass++) {
+    const nx = [pts[0]];
+    for (let i = 1; i < pts.length; i++) {
+      const [ax, ay] = pts[i - 1], [bx, by] = pts[i]; let mx = (ax + bx) / 2, my = (ay + by) / 2;
+      const dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1, o = (rnd() * 2 - 1) * disp;
+      mx += -dy / len * o; my += dx / len * o; nx.push([mx, my], [bx, by]);
+    }
+    pts = nx; disp *= .52;
+  }
+  const out = [{ pts, thick }];
+  if (depth < 2) {
+    const n = depth === 0 ? 2 + Math.floor(rnd() * 3) : Math.floor(rnd() * 2);
+    for (let k = 0; k < n; k++) {
+      const p = pts[Math.floor(pts.length * (.15 + rnd() * .6))];
+      const ang = Math.atan2(y1 - y0, x1 - x0) + (rnd() < .5 ? -1 : 1) * (.35 + rnd() * .6);
+      const len = Math.hypot(x1 - x0, y1 - y0) * (.18 + rnd() * .28) / (depth + 1);
+      out.push(...makeBolt(p[0], p[1], p[0] + Math.cos(ang) * len, p[1] + Math.sin(ang) * len, thick * .5, depth + 1));
+    }
+  }
+  return out;
+}
+const strikes = [];   // {at, bolt, x}
+function addStrike(at, x, power = 1) { seed = Math.floor(at * 1000) + 3; strikes.push({ at, power, bolt: makeBolt(x + (rnd() - .5) * 120, -20, x + (rnd() - .5) * 320, H * (.72 + rnd() * .28), 4.2 * power) }); }
+function drawStrikes(t) {
+  let flash = 0;
+  for (const s of strikes) {
+    const k = t - s.at; if (k < 0 || k > 1.1) continue;
+    const reveal = clamp(k / .11);
+    const alpha = k < .15 ? 1 : k < .22 ? .3 : k < .3 ? 1 : 1 - seg(k, .3, 1.1);
+    flash = Math.max(flash, (k < .08 ? .9 : k < .25 ? .9 * (1 - seg(k, .08, .25)) : k < .3 ? .45 : .45 * (1 - seg(k, .3, .7))) * s.power);
+    g.save(); g.globalAlpha = alpha; g.lineJoin = g.lineCap = 'round';
+    g.beginPath(); g.rect(0, 0, W, H * reveal + 40); g.clip();
+    for (const b of s.bolt) {
+      const path = () => { g.beginPath(); b.pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); };
+      g.shadowColor = C.glow; g.shadowBlur = 40; g.strokeStyle = 'rgba(79,168,255,.55)'; g.lineWidth = b.thick * 4; path(); g.stroke();
+      g.shadowBlur = 18; g.strokeStyle = C.bolt; g.lineWidth = b.thick; path(); g.stroke();
+      g.shadowBlur = 0; g.strokeStyle = '#fff'; g.lineWidth = Math.max(1, b.thick * .35); path(); g.stroke();
+    }
+    g.restore();
+  }
+  if (flash > 0) { g.fillStyle = `rgba(200,228,255,${flash * .85})`; g.fillRect(0, 0, W, H); }
+  return flash;
+}
+
+// ---------- reusable visuals ----------
+function screenshot(im, cx, cy, w, tilt = 0, alpha = 1, glow = .6) {
+  if (!im.complete || !im.naturalWidth) return;
+  const h = w * im.naturalHeight / im.naturalWidth;
+  g.save(); g.globalAlpha = alpha; g.translate(cx, cy);
+  g.transform(1, tilt * .08, 0, 1, 0, 0);
+  g.shadowColor = `rgba(79,168,255,${glow})`; g.shadowBlur = 80;
+  roundRect(-w / 2, -h / 2, w, h, 18); g.fillStyle = '#000'; g.fill();
+  g.shadowBlur = 0; g.save(); g.clip(); g.drawImage(im, -w / 2, -h / 2, w, h); g.restore();
+  g.strokeStyle = 'rgba(159,212,255,.35)'; g.lineWidth = 2; roundRect(-w / 2, -h / 2, w, h, 18); g.stroke();
+  g.restore();
+}
+
+function caption(t, a, b, title, sub, y = 150) {
+  const p = fadeInOut(t, a, b); if (p <= 0) return;
+  const rise = (1 - ease(seg(t, a, a + .6))) * 30;
+  text(title, W / 2, y + rise, 74, { alpha: p, glow: C.glow, blur: 30 });
+  if (sub) text(sub, W / 2, y + 70 + rise, 30, { alpha: p, color: C.sub, weight: 400 });
+}
+
+function chip(x, y, label, alpha, col = C.accent) {
+  g.save(); g.globalAlpha = alpha; g.font = "600 26px 'Segoe UI', sans-serif";
+  const w = g.measureText(label).width + 44;
+  roundRect(x - w / 2, y - 26, w, 52, 26); g.fillStyle = col + '33'; g.fill(); g.strokeStyle = col; g.lineWidth = 2; g.stroke();
+  g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(label, x, y + 1); g.restore();
+  return w;
+}
+
+function chipsRow(t, start, y, labels, col) {
+  let widths = labels.map(l => { g.font = "600 26px 'Segoe UI'"; return g.measureText(l).width + 44; });
+  const total = widths.reduce((a, b) => a + b, 0) + 18 * (labels.length - 1);
+  let x = W / 2 - total / 2;
+  labels.forEach((l, i) => { const p = ease(seg(t, start + i * .12, start + i * .12 + .4)); chip(x + widths[i] / 2, y + (1 - p) * 30, l, p, col); x += widths[i] + 18; });
+}
+
+// ---------- scenes ----------
+function sceneIntro(t) {                         // 0 – 7
+  sky(clamp(.25 + seg(t, 0, 2) * .75)); rain(t, clamp(seg(t, .3, 2.2)));
+  const f = drawStrikes(t);
+  const p = seg(t, 3.15, 4.2);
+  if (t > 3.1) {
+    const s = 1.35 - .35 * ease(p), fade = clamp(p * 2) * (1 - seg(t, 6.4, 7));
+    g.save(); g.font = "900 190px 'Segoe UI', sans-serif"; g.letterSpacing = '14px'; const tw = g.measureText('STORM').width; g.restore();
+    const iconSize = 160, gap = 34, total = iconSize + gap + tw;
+    g.save(); g.translate(W / 2, H / 2 - 30); g.scale(s, s);
+    if (icon.complete) { g.globalAlpha = fade; g.shadowColor = C.glow; g.shadowBlur = 60; g.drawImage(icon, -total / 2, -iconSize / 2, iconSize, iconSize); }
+    g.restore();
+    text('STORM', W / 2 + (-total / 2 + iconSize + gap + tw / 2) * s, H / 2 - 30, 190 * s, { weight: 900, glow: C.glow, blur: 60 + 80 * (1 - p), alpha: fade, spacing: 14 });
+    text('ride the lightning', W / 2, H / 2 + 110, 40, { weight: 300, color: C.sub, alpha: seg(t, 4.2, 5) * (1 - seg(t, 6.4, 7)), spacing: 6 });
+  }
+}
+
+function sceneMeet(t) {                          // 7 – 12.5
+  sky(); rain(t, .5);
+  caption(t, 7, 12.5, 'Meet Storm.', 'A browser that’s fast, private, and actually yours.');
+  const p = ease(seg(t, 7.3, 8.6));
+  screenshot(shotStart, W / 2, 665 + (1 - p) * 300, 1040 + seg(t, 8, 12.5) * 50, (1 - p) * -2, p * (1 - seg(t, 12, 12.5)));
+}
+
+function sceneAi(t) {                            // 12.5 – 18
+  sky(); rain(t, .3);
+  caption(t, 12.5, 18, 'Its own AI. On your own GPU.', 'Free. No account. Nothing you ask leaves your PC.');
+  const p = ease(seg(t, 12.7, 13.8)), z = 1 + easeIO(seg(t, 14, 18)) * .3;
+  // slow push-in toward the AI sidebar (right side of the screenshot), clipped below the title
+  g.save(); g.beginPath(); g.rect(0, 270, W, H - 270); g.clip();
+  g.translate(W / 2, 660); g.scale(z, z); g.translate(-W / 2 - (z - 1) * 900, -660);
+  screenshot(shotAi, W / 2, 660 + (1 - p) * 260, 1040, 0, p * (1 - seg(t, 17.6, 18)));
+  g.restore();
+  if (t > 15) chipsRow(t, 15, 1030, ['Summarize', 'Quiz me', 'Ask all tabs', '▶ Summarize videos', '🎤 Voice'], C.accent);
+}
+
+function sceneStudy(t) {                         // 18 – 23
+  sky(); const a = fadeInOut(t, 18, 23);
+  caption(t, 18, 23, 'Study mode.', 'Focus timer · blocks distractions · quizzes you on what you read');
+  g.save(); g.globalAlpha = a;
+  const cx = 640, cy = 600, r = 190, prog = seg(t, 18.6, 22.6);
+  g.lineWidth = 22; g.strokeStyle = 'rgba(255,255,255,.08)'; g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke();
+  g.strokeStyle = C.accent; g.shadowColor = C.glow; g.shadowBlur = 30; g.lineCap = 'round';
+  g.beginPath(); g.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (1 - prog)); g.stroke(); g.shadowBlur = 0;
+  const secs = Math.round(25 * 60 * (1 - prog)); text(`${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}`, cx, cy, 96, { weight: 300 });
+  text('📚 FOCUS', cx, cy + 90, 26, { color: C.sub, weight: 600, spacing: 4 });
+  const sites = ['youtube.com', 'tiktok.com', 'instagram.com', 'reddit.com', 'roblox.com'];
+  sites.forEach((s, i) => {
+    const k = ease(seg(t, 19 + i * .35, 19.5 + i * .35)), y = 430 + i * 82, x = 1100;
+    g.globalAlpha = a * k; roundRect(x, y - 30, 520, 60, 14); g.fillStyle = 'rgba(255,79,106,.12)'; g.fill();
+    text(s, x + 30, y, 32, { align: 'left', weight: 500 });
+    text('BLOCKED', x + 490, y, 22, { align: 'right', color: C.red, weight: 800, spacing: 2 });
+    const st = seg(t, 19.3 + i * .35, 19.7 + i * .35);
+    g.strokeStyle = C.red; g.lineWidth = 4; g.beginPath(); g.moveTo(x + 26, y); g.lineTo(x + 26 + 230 * st, y); g.stroke();
+  });
+  g.restore();
+}
+
+function sceneTor(t) {                           // 23 – 28
+  sky(); const a = fadeInOut(t, 23, 28);
+  g.save(); g.globalAlpha = a;
+  const glow = g.createRadialGradient(W / 2, 600, 50, W / 2, 600, 800); glow.addColorStop(0, 'rgba(91,42,134,.55)'); glow.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = glow; g.fillRect(0, 0, W, H); g.restore();
+  caption(t, 23, 28, '🧅 Secure tabs, powered by Tor.', 'Real onion routing. Your IP stays hidden. .onion sites just work.');
+  const nodes = [[260, 620, 'YOU'], [700, 480, 'relay'], [1060, 720, 'relay'], [1420, 520, 'relay'], [1700, 640, 'website']];
+  g.save(); g.globalAlpha = a;
+  for (let i = 0; i < nodes.length - 1; i++) {
+    const [x0, y0] = nodes[i], [x1, y1] = nodes[i + 1], p = ease(seg(t, 23.6 + i * .5, 24.2 + i * .5));
+    g.strokeStyle = C.onion; g.lineWidth = 5; g.shadowColor = C.onion; g.shadowBlur = 20; g.setLineDash([16, 12]); g.lineDashOffset = -t * 60;
+    g.beginPath(); g.moveTo(x0, y0); g.lineTo(x0 + (x1 - x0) * p, y0 + (y1 - y0) * p); g.stroke();
+  }
+  g.setLineDash([]); g.shadowBlur = 0;
+  nodes.forEach(([x, y, l], i) => {
+    const p = ease(seg(t, 23.3 + i * .5, 23.8 + i * .5)), layers = Math.max(0, 3 - i);
+    for (let k = layers; k >= 0; k--) { g.beginPath(); g.arc(x, y, (38 + k * 16) * p, 0, Math.PI * 2); g.fillStyle = k === 0 ? (i === 0 ? C.accent : i === 4 ? '#fff' : C.onion) : `rgba(185,140,255,${.14 + .06 * k})`; g.fill(); }
+    text(l, x, y + 100, 26, { color: C.sub, weight: 600, alpha: p, spacing: 3 });
+  });
+  g.restore();
+}
+
+function sceneProtect(t) {                        // 28 – 33
+  sky(); const a = fadeInOut(t, 28, 33);
+  caption(t, 28, 33, 'Protection you control.', 'Block adult & graphic content · SafeSearch · PIN lock with a cooldown · parental controls');
+  g.save(); g.globalAlpha = a;
+  const toggles = ['Sexual / adult content', 'Graphic violence & gore', 'Gambling', 'Force SafeSearch', 'Image shield'];
+  toggles.forEach((l, i) => {
+    const y = 420 + i * 92, x = 380, on = seg(t, 28.8 + i * .3, 29.1 + i * .3);
+    roundRect(x, y - 34, 640, 68, 16); g.fillStyle = 'rgba(255,255,255,.05)'; g.fill();
+    text(l, x + 30, y, 30, { align: 'left', weight: 500 });
+    roundRect(x + 540, y - 18, 70, 36, 18); g.fillStyle = on > .5 ? C.green : 'rgba(255,255,255,.18)'; g.fill();
+    g.beginPath(); g.arc(x + 558 + 34 * ease(on), y, 14, 0, Math.PI * 2); g.fillStyle = '#fff'; g.fill();
+  });
+  // PIN pad
+  const px = 1320, py = 600, dots = Math.floor(seg(t, 30.3, 31.4) * 4.99);
+  g.font = "200 140px 'Segoe UI'"; text('🛡', px, py - 140, 150, { weight: 400, glow: C.accent });
+  for (let i = 0; i < 4; i++) { g.beginPath(); g.arc(px - 90 + i * 60, py + 20, 16, 0, Math.PI * 2); g.fillStyle = i < dots ? C.accent : 'rgba(255,255,255,.18)'; g.fill(); }
+  if (t > 31.5) text('🔒 Locked · cooldown 24 h', px, py + 110, 32, { color: C.text, alpha: seg(t, 31.5, 32), weight: 600 });
+  g.restore();
+}
+
+const THEMES = [['#4FA8FF', '#0B1A33', '#05060B'], ['#A77BFF', '#2A1050', '#08050F'], ['#FF4F6A', '#3A0A18', '#0A0406'], ['#3DDC97', '#06301F', '#030A07'], ['#FFB347', '#3D2507', '#0B0703'], ['#00F0FF', '#200040', '#000814']];
+function mockBrowser(x, y, w, h, th, layout) {
+  const [ac, top, bot] = th;
+  const gr = g.createLinearGradient(0, y, 0, y + h); gr.addColorStop(0, top); gr.addColorStop(1, bot);
+  g.save(); g.shadowColor = ac; g.shadowBlur = 50; roundRect(x, y, w, h, 20); g.fillStyle = gr; g.fill(); g.restore();
+  g.save(); roundRect(x, y, w, h, 20); g.clip();
+  g.fillStyle = 'rgba(10,14,24,.75)';
+  const bottomBar = layout === 2, side = layout === 1;
+  g.fillRect(x, y, w, 46);                                           // tab row
+  if (!side) for (let i = 0; i < 4; i++) { roundRect(x + 60 + i * 190, y + 10, 175, 36, 9); g.fillStyle = i === 0 ? 'rgba(255,255,255,.2)' : 'rgba(255,255,255,.06)'; g.fill(); }
+  g.fillStyle = 'rgba(10,14,24,.75)'; const ty = bottomBar ? y + h - 56 : y + 46; g.fillRect(x, ty, w, 56);
+  roundRect(x + 140, ty + 11, w - 360, 34, 17); g.fillStyle = 'rgba(0,0,0,.35)'; g.fill();
+  if (side) { g.fillStyle = 'rgba(10,14,24,.75)'; g.fillRect(x, y + 102, 230, h - 102); for (let i = 0; i < 7; i++) { roundRect(x + 14, y + 120 + i * 50, 200, 38, 9); g.fillStyle = i === 0 ? 'rgba(255,255,255,.2)' : 'rgba(255,255,255,.06)'; g.fill(); } }
+  const cx = side ? x + 230 + (w - 230) / 2 : x + w / 2, cy = y + h / 2 + (bottomBar ? -20 : 40);
+  g.font = "300 84px 'Segoe UI'"; g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('8:57', cx, cy - 50);
+  roundRect(cx - 280, cy + 30, 560, 54, 27); g.fillStyle = 'rgba(255,255,255,.07)'; g.fill(); g.strokeStyle = ac; g.lineWidth = 2; g.stroke();
+  g.fillStyle = ac; g.font = "700 26px 'Segoe UI'"; g.fillText('⚡', cx - 245, cy + 58);
+  g.restore();
+}
+function sceneCustom(t) {                         // 33 – 38
+  sky(); const a = fadeInOut(t, 33, 38);
+  caption(t, 33, 38, 'Make it yours.', 'Themes · video wallpapers · custom cursors · layouts · music · share it all as one file', 140);
+  g.save(); g.globalAlpha = a;
+  const k = Math.floor(seg(t, 33.4, 37.6) * 11.99), th = THEMES[k % THEMES.length], layout = Math.floor(k / 4) % 3;
+  mockBrowser(380, 280, 1160, 680, th, layout);
+  text(['Classic', 'Vertical tabs', 'Bottom bar'][layout], 1600, 930, 28, { align: 'left', color: th[0], weight: 700, alpha: a });
+  // custom cursor gliding across
+  const cx = 600 + 700 * easeIO(seg(t, 34, 37.5)), cy = 700 - 200 * Math.sin(seg(t, 34, 37.5) * Math.PI);
+  g.fillStyle = th[0]; g.shadowColor = th[0]; g.shadowBlur = 20; g.font = "48px 'Segoe UI Emoji'"; g.fillText('⚡', cx, cy);
+  g.restore();
+}
+
+function sceneGrid(t) {                           // 38 – 41
+  sky(); rain(t, .4); const a = fadeInOut(t, 38, 41, .3);
+  const items = ['🔑 Password manager', '◫ Split view', '📖 Reader mode', '🖼 Picture-in-picture', '🧩 Extensions', '📥 Import from Chrome', '🗂 Tab groups', '🔐 Encrypted data', '⬆ Signed updates', '🔍 20 search engines', '🎵 Music player', '⌘ Command palette'];
+  items.forEach((s, i) => {
+    const col = i % 3, row = Math.floor(i / 3), p = ease(seg(t, 38.05 + i * .09, 38.45 + i * .09));
+    const x = 420 + col * 540, y = 290 + row * 160;
+    g.save(); g.globalAlpha = a * p; g.translate(x, y + (1 - p) * 40);
+    roundRect(-240, -55, 480, 110, 22); g.fillStyle = 'rgba(79,168,255,.10)'; g.fill(); g.strokeStyle = 'rgba(79,168,255,.45)'; g.lineWidth = 2; g.stroke();
+    text(s, 0, 0, 34, { weight: 600 }); g.restore();
+  });
+}
+
+function sceneEnd(t) {                            // 41 – 44
+  sky(); rain(t, 1); const f = drawStrikes(t);
+  const p = ease(seg(t, 41.15, 42));
+  if (t > 41.1) {
+    if (icon.complete) { g.save(); g.globalAlpha = p; g.shadowColor = C.glow; g.shadowBlur = 70; g.drawImage(icon, W / 2 - 90, 250, 180, 180); g.restore(); }
+    text('STORM', W / 2, 560, 170, { weight: 900, glow: C.glow, blur: 70, alpha: p, spacing: 12 });
+    text(DOWNLOAD_TEXT, W / 2, 690, 46, { weight: 600, alpha: seg(t, 41.8, 42.5), color: C.text });
+    text('ride the lightning', W / 2, 760, 32, { weight: 300, color: C.sub, alpha: seg(t, 42.2, 43), spacing: 6 });
+  }
+  g.fillStyle = `rgba(0,0,0,${seg(t, 43.3, 44)})`; g.fillRect(0, 0, W, H);
+}
+
+addStrike(3.1, W * .5, 1.15); addStrike(3.42, W * .22, .6); addStrike(3.7, W * .8, .55); addStrike(41.0, W * .5, 1.1); addStrike(41.25, W * .75, .5);
+
+function frame(t) {
+  g.clearRect(0, 0, W, H);
+  if (t < 7) sceneIntro(t);
+  else if (t < 12.5) sceneMeet(t);
+  else if (t < 18) sceneAi(t);
+  else if (t < 23) sceneStudy(t);
+  else if (t < 28) sceneTor(t);
+  else if (t < 33) sceneProtect(t);
+  else if (t < 38) sceneCustom(t);
+  else if (t < 41) sceneGrid(t);
+  else sceneEnd(t);
+  // subtle vignette + letterbox
+  const v = g.createRadialGradient(W / 2, H / 2, H * .35, W / 2, H / 2, H * .95); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.55)');
+  g.fillStyle = v; g.fillRect(0, 0, W, H);
+}
+
+// =====================================================================
+//  Sound, all synthesized: rain, a dark drone and a pulse.
+// =====================================================================
+let ac, master, dest;
+function whiteBuffer(sec) { const b = ac.createBuffer(1, ac.sampleRate * sec, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return b; }
+function startAudio() {
+  ac = new (window.AudioContext || window.webkitAudioContext)();
+  master = ac.createGain(); master.gain.value = .8;
+  const comp = ac.createDynamicsCompressor(); master.connect(comp); comp.connect(ac.destination);
+  dest = ac.createMediaStreamDestination(); comp.connect(dest);
+  const now = ac.currentTime;
+  // rain bed
+  const r = ac.createBufferSource(); r.buffer = whiteBuffer(4); r.loop = true; const rf = ac.createBiquadFilter(); rf.type = 'bandpass'; rf.frequency.value = 2400; rf.Q.value = .4;
+  const rg = ac.createGain(); rg.gain.setValueAtTime(0, now); rg.gain.linearRampToValueAtTime(.09, now + 2.5); rg.gain.setValueAtTime(.09, now + 6.5); rg.gain.linearRampToValueAtTime(.035, now + 8); rg.gain.setValueAtTime(.035, now + 40.5); rg.gain.linearRampToValueAtTime(.1, now + 41.2); rg.gain.linearRampToValueAtTime(0, now + 44);
+  r.connect(rf).connect(rg).connect(master); r.start(now); r.stop(now + DURATION);
+  // drone pad (A minor-ish, detuned)
+  [55, 82.41, 110.0, 130.81, 164.81].forEach((f, i) => {
+    const o = ac.createOscillator(); o.type = i < 2 ? 'sawtooth' : 'triangle'; o.frequency.value = f; o.detune.value = (i % 2 ? 7 : -7);
+    const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(200, now); lp.frequency.linearRampToValueAtTime(900, now + 30); lp.frequency.linearRampToValueAtTime(400, now + 44);
+    const og = ac.createGain(); og.gain.setValueAtTime(0, now); og.gain.linearRampToValueAtTime(.05 / (i + 1) + .012, now + 6); og.gain.setValueAtTime(.05 / (i + 1) + .012, now + 42); og.gain.linearRampToValueAtTime(0, now + 44);
+    o.connect(lp).connect(og).connect(master); o.start(now); o.stop(now + DURATION);
+  });
+  // pulse: soft kick on the beat from the reveal onward (100 bpm), lifting in the feature run
+  for (let b = 7.2; b < 40.8; b += .6) {
+    const t0 = now + b, k = ac.createOscillator(), kg = ac.createGain();
+    k.frequency.setValueAtTime(120, t0); k.frequency.exponentialRampToValueAtTime(42, t0 + .18);
+    const vol = b < 12.5 ? .35 : b < 38 ? .55 : .7;
+    kg.gain.setValueAtTime(vol, t0); kg.gain.exponentialRampToValueAtTime(.0001, t0 + .32);
+    k.connect(kg).connect(master); k.start(t0); k.stop(t0 + .35);
+    if (b > 18 && Math.round((b - 7.2) / .6) % 2 === 1) {      // off-beat hat
+      const h = ac.createBufferSource(); h.buffer = whiteBuffer(.1); const hf = ac.createBiquadFilter(); hf.type = 'highpass'; hf.frequency.value = 7000;
+      const hg = ac.createGain(); hg.gain.setValueAtTime(.08, t0); hg.gain.exponentialRampToValueAtTime(.0001, t0 + .06); h.connect(hf).connect(hg).connect(master); h.start(t0);
+    }
+  }
+  return now;
+}
+
+// =====================================================================
+//  Playback & recording
+// =====================================================================
+const ui = document.getElementById('ui'), status = document.getElementById('status');
+let playing = false;
+function play(record) {
+  if (playing) return; playing = true; ui.classList.add('hide');
+  const t0 = startAudio(); const startPerf = performance.now();
+  let rec, chunks = [];
+  if (record) {
+    const stream = new MediaStream([...cv.captureStream(60).getVideoTracks(), ...dest.stream.getAudioTracks()]);
+    const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(m => MediaRecorder.isTypeSupported(m));
+    rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 16_000_000 });
+    rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+    rec.onstop = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(chunks, { type: 'video/webm' })); a.download = 'storm-trailer.webm'; a.click(); status.textContent = '✓ Saved storm-trailer.webm to your Downloads'; };
+    rec.start(250); status.textContent = '⏺ Recording… keep this tab visible';
+  }
+  function tick() {
+    const t = (performance.now() - startPerf) / 1000;
+    frame(Math.min(t, DURATION));
+    if (t < DURATION) requestAnimationFrame(tick);
+    else { playing = false; ui.classList.remove('hide'); if (rec) rec.stop(); ac.close(); }
+  }
+  requestAnimationFrame(tick);
+}
+document.getElementById('play').onclick = () => play(false);
+document.getElementById('rec').onclick = () => play(true);
+document.getElementById('fs').onclick = () => document.documentElement.requestFullscreen?.();
+
+// Poster frame, or ?t=12 to preview any moment.
+const q = new URLSearchParams(location.search).get('t');
+Promise.all([shotStart, shotAi, icon].map(i => i.decode().catch(() => {}))).then(() => frame(q ? parseFloat(q) : 3.75));
+</script>
+</body>
+</html>

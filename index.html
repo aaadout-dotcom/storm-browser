@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Storm: ride the lightning</title>
+  <meta name="description" content="Storm is a fast, private Windows web browser with built-in ad blocking, a local AI sidebar, study mode, Tor-powered Secure tabs and a lightning-strike intro.">
+  <meta name="theme-color" content="#0B1A33">
+  <meta property="og:title" content="Storm: ride the lightning">
+  <meta property="og:description" content="A fast, private browser for Windows with ad blocking, local AI, study mode and Tor Secure tabs.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <script src="storm.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Storm home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE8FF"/><stop offset="1" stop-color="#4FA8FF"/></linearGradient></defs><circle cx="16" cy="16" r="15" fill="#0B1A33" stroke="#4FA8FF" stroke-opacity=".5"/><path d="M18.5 4 9 18h6l-2.5 10L23 13h-6.2z" fill="url(#lg)"/></svg>
+      Storm
+    </a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav"><span></span></button>
+    <nav class="nav" id="nav">
+      <a href="#features">Features</a>
+      <a href="#study">Study mode</a>
+      <a href="#ai">Storm AI</a>
+      <a href="#faq">FAQ</a>
+      <a href="changelog.html">Changelog</a>
+      <a class="btn btn-primary btn-sm" href="download.html">Download</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" aria-labelledby="hero-title">
+    <canvas id="sky" aria-hidden="true"></canvas>
+    <div class="wrap hero-inner">
+      <span class="eyebrow"><span class="dot"></span><span>Version <span data-version></span> for Windows</span></span>
+      <h1 id="hero-title"><span class="bolt-text">Storm</span></h1>
+      <p class="tagline">ride the lightning</p>
+      <p class="lede">A fast, private web browser for Windows. Ad and tracker blocking, a free AI that runs on your own GPU, Tor-powered Secure tabs, a focus mode that actually keeps you focused, and an intro that hits like thunder.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" data-download href="download.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg>
+          <span>Download for Windows<span class="btn-sub">Free · Windows 10 &amp; 11 (64-bit)</span></span>
+        </a>
+        <a class="btn btn-lg" href="#features">See what it does</a>
+      </div>
+      <p class="hero-meta"><span>Signed releases</span><span>No telemetry</span><span>Auto-updates</span></p>
+    </div>
+  </section>
+
+  <section id="features" aria-labelledby="f-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Everything built in</span>
+        <h2 id="f-title">A browser that does more out of the box</h2>
+        <p>No extension hunting. Storm ships with the things people install on day one, and a few nobody else has.</p>
+      </div>
+      <div class="grid grid-3">
+        <article class="card reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div>
+          <h3>Lightning-strike intro</h3>
+          <p>Every launch opens with a bolt and procedurally generated thunder, never the same twice. Tune it, tone it down, or turn it off.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <h3>Ad &amp; tracker blocking</h3>
+          <p>Ads and trackers are blocked before they load. Pages get lighter, faster and a lot less nosy.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18M3.5 9h17M3.5 15h17"/></svg></div>
+          <h3>Tor-powered Secure tabs</h3>
+          <p>Open a Secure tab to route traffic through the Tor network when you need more anonymity than a normal tab gives.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m3 15 5-5 4 4 3-3 6 6"/></svg></div>
+          <h3>Video &amp; image wallpapers</h3>
+          <p>Put a looping video or your favourite picture behind the new tab page. Add custom cursors while you're at it.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <h3>Built-in music player</h3>
+          <p>Play your own music without another app or tab open. Controls live right in the browser.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg></div>
+          <h3>Layouts your way</h3>
+          <p>Vertical tabs, a bottom toolbar, compact or roomy, then save the setup as a preset and switch in one click.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+          <h3>20 search engines</h3>
+          <p>Pick a default, or use keyword shortcuts in the address bar, type <code>b cats</code> to search Bing for cats.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h12m0 0-4-4m4 4-4 4"/><path d="M20 4v16"/></svg></div>
+          <h3>Import in one step</h3>
+          <p>Bring bookmarks and history from Chrome, Edge, Firefox, Brave or Opera. Stay signed in to Google, Discord and the rest.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h2M11 10h2M15 10h2M7 14h10"/></svg></div>
+          <h3>Command palette</h3>
+          <p>Press <kbd>Ctrl</kbd> + <kbd>K</kbd> to jump to any tab, bookmark, setting or action without touching the mouse.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Storm at a glance" style="padding-top:0">
+    <div class="wrap">
+      <div class="stats reveal">
+        <div><b>~100</b><span>settings to tune</span></div>
+        <div><b>20</b><span>search engines</span></div>
+        <div><b>5</b><span>browsers to import from</span></div>
+        <div><b>0</b><span>telemetry</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="study" aria-labelledby="s-title">
+    <div class="wrap">
+      <div class="spot reveal">
+        <div class="spot-text">
+          <span class="kicker">Study mode</span>
+          <h2 id="s-title">Focus that sticks</h2>
+          <p>Flip on study mode and Storm becomes a study partner instead of a distraction machine.</p>
+          <ul>
+            <li><strong>Pomodoro focus timer</strong> built into the toolbar, with breaks that remind you to take them.</li>
+            <li><strong>Distracting-site blocking</strong> during focus sessions, you pick the list.</li>
+            <li><strong>AI quizzes and flashcards</strong> generated from the page you're reading.</li>
+          </ul>
+        </div>
+        <div class="shot" role="img" aria-label="Screenshot placeholder: study mode">
+          <div class="chrome"><i></i><i></i><i></i><span class="tab"></span><span class="tab"></span><span class="url"></span></div>
+          <div class="label"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg><strong>Study mode screenshot</strong>Drop in <code>img/study.png</code></div></div>
+        </div>
+      </div>
+
+      <div class="spot flip reveal" id="ai">
+        <div class="spot-text">
+          <span class="kicker">Storm AI</span>
+          <h2>An AI sidebar that can be fully local</h2>
+          <p>Ask about the page you're on, summarize long articles, or draft a reply, right beside the page.</p>
+          <ul>
+            <li><strong>Free local AI</strong> runs an open model on your own GPU. Nothing leaves your PC.</li>
+            <li><strong>Or bring Claude</strong>, add your own Anthropic API key for a more capable model.</li>
+            <li><strong>Your choice, per use.</strong> No account, no subscription from us.</li>
+          </ul>
+        </div>
+        <div class="shot" role="img" aria-label="Screenshot placeholder: Storm AI sidebar">
+          <div class="chrome"><i></i><i></i><i></i><span class="tab"></span><span class="url"></span></div>
+          <div class="label"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8M8 13h5"/></svg><strong>Storm AI screenshot</strong>Drop in <code>img/ai.png</code></div></div>
+        </div>
+      </div>
+
+      <div class="spot reveal">
+        <div class="spot-text">
+          <span class="kicker">Safety &amp; privacy</span>
+          <h2>Locked down when you need it</h2>
+          <p>Storm keeps your stuff on your machine and gives you real controls over what can be opened.</p>
+          <ul>
+            <li><strong>Encrypted local data</strong>, history, bookmarks and settings are protected with Windows DPAPI.</li>
+            <li><strong>Content filters &amp; parental controls</strong> with a PIN lock so settings stay put.</li>
+            <li><strong>Signed auto-updates</strong>, Storm checks each update's signature before installing it.</li>
+          </ul>
+        </div>
+        <div class="shot" role="img" aria-label="Screenshot placeholder: settings">
+          <div class="chrome"><i></i><i></i><i></i><span class="tab"></span><span class="tab"></span><span class="url"></span></div>
+          <div class="label"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><strong>Settings screenshot</strong>Drop in <code>img/settings.png</code></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenshots" aria-labelledby="g-title" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Gallery</span>
+        <h2 id="g-title">See it in action</h2>
+      </div>
+      <div class="gallery reveal">
+        <figure>
+          <div class="shot" role="img" aria-label="Screenshot placeholder: new tab with wallpaper"><div class="chrome"><i></i><i></i><i></i><span class="tab"></span><span class="url"></span></div><div class="label"><div><strong>New tab + wallpaper</strong><code>img/newtab.png</code></div></div></div>
+          <figcaption>Video wallpapers on the new tab page</figcaption>
+        </figure>
+        <figure>
+          <div class="shot" role="img" aria-label="Screenshot placeholder: vertical tabs layout"><div class="chrome"><i></i><i></i><i></i><span class="url"></span></div><div class="label"><div><strong>Vertical tabs</strong><code>img/layout.png</code></div></div></div>
+          <figcaption>Vertical tabs and a bottom toolbar</figcaption>
+        </figure>
+        <figure>
+          <div class="shot" role="img" aria-label="Screenshot placeholder: command palette"><div class="chrome"><i></i><i></i><i></i><span class="tab"></span><span class="tab"></span><span class="url"></span></div><div class="label"><div><strong>Command palette</strong><code>img/palette.png</code></div></div></div>
+          <figcaption>Everything is one <kbd>Ctrl</kbd> + <kbd>K</kbd> away</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" aria-labelledby="q-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">FAQ</span>
+        <h2 id="q-title">Questions, answered</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>Is Storm free?</summary>
+          <div><p>Yes. Storm is free to download and use. The local AI is free too. If you choose to use Claude in the AI sidebar, you add your own Anthropic API key and Anthropic bills you directly for what you use.</p></div>
+        </details>
+        <details>
+          <summary>What is Storm built on?</summary>
+          <div><p>Storm uses Microsoft Edge WebView2, the same Chromium engine as Edge, so websites work the way you expect. The browser around it (tabs, AI, study mode, blocking, layouts) is Storm's own.</p></div>
+        </details>
+        <details>
+          <summary>Will my Google, Discord and other logins work?</summary>
+          <div><p>Yes. Storm keeps you signed in between sessions like any modern browser. You can also import bookmarks and history from Chrome, Edge, Firefox, Brave or Opera on first run.</p></div>
+        </details>
+        <details>
+          <summary>Does Storm collect any data?</summary>
+          <div><p>No telemetry. Your history, bookmarks and settings stay on your PC, encrypted with Windows DPAPI. Read the full <a href="privacy.html">privacy page</a> for exactly what goes where.</p></div>
+        </details>
+        <details>
+          <summary>What does the local AI need?</summary>
+          <div><p>A reasonably modern graphics card. The local model runs on your GPU, so a stronger GPU means faster answers. No GPU? You can use Claude with your own API key instead, or just leave the AI off.</p></div>
+        </details>
+        <details>
+          <summary>Are Secure tabs the same as Tor Browser?</summary>
+          <div><p>Secure tabs route traffic through the Tor network, which hides your IP address from the sites you visit. They're a convenient extra layer, not a replacement for Tor Browser's full hardening if you face serious threats.</p></div>
+        </details>
+        <details>
+          <summary>Windows says the download is unrecognized. Is it safe?</summary>
+          <div><p>Releases are signed. New software can still trigger a SmartScreen notice until it builds reputation. You can check the file's SHA-256 checksum against the one on the <a href="download.html">download page</a> before running it.</p></div>
+        </details>
+        <details>
+          <summary>How do updates work?</summary>
+          <div><p>Storm checks for updates on its own, verifies the update's signature, and installs it. See what changed on the <a href="changelog.html">changelog</a>.</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Download Storm" style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <h2>The forecast: faster browsing</h2>
+        <p>Download Storm for Windows and feel the first strike.</p>
+        <a class="btn btn-primary btn-lg" data-download href="download.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg>
+          Download for Windows
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#0B1A33" stroke="#4FA8FF" stroke-opacity=".5"/><path d="M18.5 4 9 18h6l-2.5 10L23 13h-6.2z" fill="#9CD0FF"/></svg>Storm</a>
+        <p style="margin-top:12px">A fast, private browser for Windows.<br>Ride the lightning.</p>
+      </div>
+      <div><h4>Product</h4><ul><li><a href="download.html">Download</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="index.html#features">Features</a></li></ul></div>
+      <div><h4>Trust</h4><ul><li><a href="privacy.html">Privacy</a></li><li><a href="download.html#verify">Verify a download</a></li></ul></div>
+      <div><h4>Help</h4><ul><li><a href="index.html#faq">FAQ</a></li><li><a href="download.html#requirements">Requirements</a></li></ul></div>
+    </div>
+    <div class="foot-bottom"><span>© <span id="year">2026</span> Storm</span><span>Not affiliated with Microsoft, Google or Anthropic.</span></div>
+  </div>
+</footer>
+</body>
+</html>

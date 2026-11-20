@@ -223,8 +223,8 @@ function sceneTor(t) {                           // 23 – 28
   g.save(); g.globalAlpha = a;
   const glow = g.createRadialGradient(W / 2, 600, 50, W / 2, 600, 800); glow.addColorStop(0, 'rgba(91,42,134,.55)'); glow.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = glow; g.fillRect(0, 0, W, H); g.restore();
-  caption(t, 23, 28, '◈ Mirage VPN + ☔ Rainshield.', 'Hide your IP in one click. Every download scanned. Scam sites stopped cold.');
-  const nodes = [[360, 640, 'YOU'], [960, 520, 'MIRAGE'], [1560, 640, 'website']];
+  caption(t, 23, 28, '◈ Mirage sandbox + ☔ Rainshield.', 'Open anything risky sealed off. Every download scanned. Scam sites stopped cold.');
+  const nodes = [[360, 640, 'RISKY FILE'], [960, 520, 'MIRAGE'], [1560, 640, 'YOUR PC: SAFE']];
   g.save(); g.globalAlpha = a;
   // a phishing site trying to get in, then blocked
   const bp = seg(t, 25.4, 26.4);

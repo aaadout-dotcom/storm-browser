@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Storm Pricing</title>
+  <meta name="description" content="Storm is free. Optional add-ons: Rainshield antivirus, Mirage VPN, or RainProtection with both.">
+  <meta name="theme-color" content="#0A0A0B">
+  <link rel="icon" href="trailer/icon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <script src="storm.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="trailer/icon.png" width="256" height="256" alt="">Storm</a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav"><span></span></button>
+    <nav class="nav" id="nav">
+      <a href="index.html#features">Features</a>
+      <a href="pricing.html" aria-current="page">Pricing</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="privacy.html">Privacy</a>
+      <a class="btn btn-sm" href="download.html">Download</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <section class="page-head">
+    <div class="wrap">
+      <span class="eyebrow">Pricing</span>
+      <h1>Free browser.<br>Optional extra cover.</h1>
+      <p class="lede">The browser is free. Add protection only if you want it.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:48px">
+    <div class="wrap">
+      <div class="plans">
+        <article class="plan">
+          <h3>Storm</h3>
+          <p class="what">The whole browser</p>
+          <div class="price">$0</div>
+          <ul>
+            <li>Ad and tracker blocking</li>
+            <li>Storm AI sidebar</li>
+            <li>Study mode</li>
+            <li>Password manager</li>
+            <li>Themes, wallpapers and music</li>
+          </ul>
+          <a class="btn btn-ghost" data-download href="download.html">Download</a>
+        </article>
+        <article class="plan sky">
+          <h3>Rainshield</h3>
+          <p class="what">Antivirus for your browsing</p>
+          <div class="price">$2.99<small> /month</small></div>
+          <ul>
+            <li>Scans every download</li>
+            <li>Blocks malware sites</li>
+            <li>Blocks phishing sites</li>
+            <li>Quarantines anything nasty</li>
+          </ul>
+          <a class="btn" data-buy="rainshield" href="#">Get Rainshield</a>
+        </article>
+        <article class="plan lilac">
+          <h3>Mirage</h3>
+          <p class="what">VPN built into Storm</p>
+          <div class="price">$4.99<small> /month</small></div>
+          <ul>
+            <li>Hides your IP address</li>
+            <li>Encrypts browsing on public Wi-Fi</li>
+            <li>Kill switch if the connection drops</li>
+          </ul>
+          <a class="btn" data-buy="mirage" href="#">Get Mirage</a>
+        </article>
+        <article class="plan peach">
+          <span class="badge">Best value</span>
+          <h3>RainProtection</h3>
+          <p class="what">Everything, all together</p>
+          <div class="price">$6.99<small> /month</small></div>
+          <ul>
+            <li>Everything in Rainshield</li>
+            <li>Everything in Mirage</li>
+            <li>Look-alike scam site warnings</li>
+            <li>Leaked password check</li>
+            <li>Fingerprint shield</li>
+          </ul>
+          <a class="btn" data-buy="rainprotection" href="#">Get RainProtection</a>
+        </article>
+      </div>
+      <p class="plan-note">Secure checkout by Stripe &middot; Cancel anytime &middot; Use on up to 5 PCs</p>
+    </div>
+  </section>
+
+  <section class="section soft">
+    <div class="wrap">
+      <div class="faq">
+        <details>
+          <summary>Do I need an add-on to use Storm?</summary>
+          <div><p>No. Storm works fully without any add-on. Ad blocking, the AI sidebar, study mode and everything else are free.</p></div>
+        </details>
+        <details>
+          <summary>How do I cancel?</summary>
+          <div><p>You can cancel anytime. Checkout and billing are handled by Stripe.</p></div>
+        </details>
+        <details>
+          <summary>Does Rainshield or Mirage see what I browse?</summary>
+          <div><p>Rainshield checks downloads with your PC's own antivirus engine and checks sites against lists downloaded to your PC, so nothing about your browsing is sent anywhere. Mirage routes your traffic through Storm's servers only while you have it turned on. The <a href="privacy.html">privacy page</a> has the details.</p></div>
+        </details>
+        <details>
+          <summary>Can I use one subscription on more than one PC?</summary>
+          <div><p>Yes, on up to 5 PCs.</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot">
+      <a class="brand" href="index.html"><img src="trailer/icon.png" width="256" height="256" alt="">Storm</a>
+      <ul>
+        <li><a href="download.html">Download</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="changelog.html">Changelog</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="trailer/index.html">Trailer</a></li>
+      </ul>
+    </div>
+    <div class="foot-bottom"><span>&copy; <span id="year">2026</span> Storm. Made with care for Windows.</span><span>Not affiliated with Microsoft, Google or Anthropic.</span></div>
+  </div>
+</footer>
+</body>
+</html>

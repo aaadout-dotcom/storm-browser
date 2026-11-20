@@ -5,97 +5,99 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Storm Privacy</title>
   <meta name="description" content="What Storm stores, where it goes, and what never leaves your PC.">
-  <meta name="theme-color" content="#0B1A33">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#0A0A0B">
+  <link rel="icon" href="trailer/icon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
   <script src="storm.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="site-header">
+<header class="topbar">
   <div class="wrap">
-    <a class="brand" href="index.html" aria-label="Storm home">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE8FF"/><stop offset="1" stop-color="#4FA8FF"/></linearGradient></defs><circle cx="16" cy="16" r="15" fill="#0B1A33" stroke="#4FA8FF" stroke-opacity=".5"/><path d="M18.5 4 9 18h6l-2.5 10L23 13h-6.2z" fill="url(#lg)"/></svg>
-      Storm
-    </a>
+    <a class="brand" href="index.html"><img src="trailer/icon.png" width="256" height="256" alt="">Storm</a>
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav"><span></span></button>
     <nav class="nav" id="nav">
       <a href="index.html#features">Features</a>
-      <a href="index.html#study">Study mode</a>
-      <a href="index.html#ai">Storm AI</a>
-      <a href="index.html#faq">FAQ</a>
+      <a href="pricing.html">Pricing</a>
       <a href="changelog.html">Changelog</a>
-      <a class="btn btn-primary btn-sm" href="download.html">Download</a>
+      <a href="privacy.html" aria-current="page">Privacy</a>
+      <a class="btn btn-sm" href="download.html">Download</a>
     </nav>
   </div>
 </header>
 <main id="main">
-  <section class="page-hero">
-    <canvas id="sky-sm" aria-hidden="true"></canvas>
+  <section class="page-head">
     <div class="wrap">
-      <span class="kicker">Privacy</span>
+      <span class="eyebrow">Privacy</span>
       <h1>Your data stays on your PC</h1>
-      <p>Plain-language answers about what Storm stores and where anything goes.</p>
+      <p class="lede">Plain answers about what Storm keeps, and the few times anything leaves your computer.</p>
     </div>
   </section>
 
-  <section class="content">
-    <div class="wrap prose">
-      <div class="note"><strong>The short version:</strong> Storm has no telemetry and no account. Your browsing data is stored locally and encrypted. The only time page content leaves your PC for an AI service is if <em>you</em> add a Claude API key and use it.</div>
+  <div class="wrap">
+    <article class="prose">
+      <div class="callout"><p><strong>The short version:</strong> Storm has no telemetry and no account. Your browsing data lives on your PC, encrypted. Something only leaves your PC when you turn on a feature that needs it, like Claude in the AI sidebar or the Mirage VPN.</p></div>
 
       <h2>No telemetry</h2>
-      <p>Storm does not send usage statistics, crash analytics, browsing history or identifiers to us or anyone else. We don't run a server that collects information about you.</p>
+      <p>Storm doesn't send usage stats, crash analytics, browsing history or tracking IDs to us or anyone else.</p>
 
       <h2>What's stored, and how</h2>
-      <p>History, bookmarks, settings, saved layouts and similar data are kept <strong>on your device only</strong>. Storm encrypts this data with <strong>Windows DPAPI</strong> (Data Protection API), which ties the encryption to your Windows user account, another user on the same PC can't read it.</p>
-      <p>Cookies and site logins (so you stay signed in to Google, Discord and others) are stored locally by Microsoft Edge WebView2, the engine Storm uses to display pages.</p>
-      <p>You can clear your data at any time from Storm's settings, or by uninstalling Storm and deleting its data folder.</p>
+      <p>History, bookmarks, saved passwords, settings and layouts are kept <strong>on your PC only</strong>. Storm encrypts them with <strong>Windows DPAPI</strong>, which ties the encryption to your Windows account, so another user on the same PC can't read them.</p>
+      <p>Cookies and site logins (so you stay signed in to Google, Discord and others) are stored on your PC by Microsoft Edge WebView2, the engine Storm uses to show web pages.</p>
+      <p>You can clear your data from Storm's settings at any time, or uninstall Storm and delete its data folder.</p>
 
       <h2>Storm AI</h2>
       <ul>
-        <li><strong>Local AI (default free option):</strong> runs an open model on your own GPU. Your prompts and the page text it reads are processed on your PC and are not sent anywhere.</li>
-        <li><strong>Claude (optional):</strong> only works if you add your own Anthropic API key. When you use it, your prompt and the text of the page you're asking about are sent to <strong>Anthropic</strong> to generate a response. That data is handled under Anthropic's own privacy policy and terms. Your key is stored locally, encrypted with DPAPI.</li>
+        <li><strong>Local AI (free):</strong> runs an open model on your own graphics card. Your questions and the page it reads stay on your PC.</li>
+        <li><strong>Claude (optional):</strong> only works if you add your own Anthropic API key. When you use it, your question and the text of the page you're asking about are sent to <strong>Anthropic</strong>, and their privacy policy applies. Your key is stored on your PC, encrypted.</li>
         <li>If you never add a key, nothing is ever sent to Anthropic.</li>
       </ul>
 
-      <h2>Secure tabs (Tor)</h2>
-      <p>Secure tabs route traffic through the <strong>Tor network</strong>. Sites you visit see a Tor exit node's address instead of yours, and your internet provider sees that you're using Tor but not which sites you visit. Tor relays are run by volunteers, not by us. Secure tabs add anonymity but are not a substitute for Tor Browser's full hardening against serious threats.</p>
-
-      <h2>Ad &amp; tracker blocking</h2>
-      <p>Blocking happens on your device. Storm doesn't report which requests it blocked or which sites you visited.</p>
-
-      <h2>Network requests Storm itself makes</h2>
+      <h2>Paid add-ons</h2>
       <ul>
-        <li><strong>Update checks:</strong> Storm downloads a small update manifest from this website to see if a new version exists. Like any web request, the host sees your IP address. No identifiers are attached. Updates are signature-checked before install.</li>
-        <li><strong>Search:</strong> searches go to the search engine you choose (Storm supports 20). That engine's privacy policy applies.</li>
-        <li><strong>Websites you visit:</strong> work exactly as in any browser, those sites see your requests.</li>
+        <li><strong>Rainshield</strong> checks downloads with your PC's own antivirus engine, and checks sites against block lists that are downloaded to your PC. Nothing about your browsing is sent anywhere.</li>
+        <li><strong>Mirage</strong> routes your traffic through Storm's servers while it's turned on, so websites see Storm's address instead of yours. When Mirage is off, your traffic goes directly to sites as usual.</li>
+        <li><strong>Leaked password check</strong> (RainProtection) never sends your password. It sends only the first 5 characters of a SHA-1 hash of it, gets back a list of matching leaked hashes, and compares them on your PC.</li>
+        <li><strong>Payments</strong> are handled by Stripe. We don't see or store your card details.</li>
+      </ul>
+
+      <h2>Ad and tracker blocking</h2>
+      <p>Blocking happens on your PC. Storm doesn't report what it blocked or which sites you visited.</p>
+
+      <h2>Requests Storm makes on its own</h2>
+      <ul>
+        <li><strong>Update checks:</strong> Storm downloads a small update file from this website to see if there's a new version. Like any web request, the server sees your IP address. No IDs are attached, and each update's signature is checked before it installs.</li>
+        <li><strong>Search:</strong> your searches go to the search engine you choose, and that engine's privacy policy applies.</li>
       </ul>
 
       <h2>Parental controls</h2>
-      <p>Content filters and lock settings, including the PIN, are stored locally and encrypted. They are never sent anywhere.</p>
+      <p>Content filters, lock settings and the PIN are stored on your PC, encrypted, and never sent anywhere.</p>
 
       <h2>This website</h2>
-      <p>This site is static. It sets no cookies and has no analytics or third-party scripts. Your hosting provider may keep standard server logs (such as IP address and requested page) as part of serving the site.</p>
+      <p>This site sets no cookies and has no analytics. Its font is loaded from Google Fonts, so your browser asks Google for it. The host may keep standard server logs, like IP address and the page requested, as part of serving pages.</p>
 
       <h2>Changes</h2>
-      <p>If this policy changes, the update will be listed in the <a href="changelog.html">changelog</a> and this page will show the new date.</p>
-      <p><small style="color:var(--muted)">Last updated: <span data-release-date></span></small></p>
-    </div>
-  </section>
+      <p>If this page changes, we'll note it in the <a href="changelog.html">changelog</a>.</p>
+    </article>
+  </div>
 </main>
-<footer class="site-footer">
+<footer class="footer">
   <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#0B1A33" stroke="#4FA8FF" stroke-opacity=".5"/><path d="M18.5 4 9 18h6l-2.5 10L23 13h-6.2z" fill="#9CD0FF"/></svg>Storm</a>
-        <p style="margin-top:12px">A fast, private browser for Windows.<br>Ride the lightning.</p>
-      </div>
-      <div><h4>Product</h4><ul><li><a href="download.html">Download</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="index.html#features">Features</a></li></ul></div>
-      <div><h4>Trust</h4><ul><li><a href="privacy.html">Privacy</a></li><li><a href="download.html#verify">Verify a download</a></li></ul></div>
-      <div><h4>Help</h4><ul><li><a href="index.html#faq">FAQ</a></li><li><a href="download.html#requirements">Requirements</a></li></ul></div>
+    <div class="foot">
+      <a class="brand" href="index.html"><img src="trailer/icon.png" width="256" height="256" alt="">Storm</a>
+      <ul>
+        <li><a href="download.html">Download</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="changelog.html">Changelog</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="trailer/index.html">Trailer</a></li>
+      </ul>
     </div>
-    <div class="foot-bottom"><span>© <span id="year">2026</span> Storm</span><span>Not affiliated with Microsoft, Google or Anthropic.</span></div>
+    <div class="foot-bottom"><span>&copy; <span id="year">2026</span> Storm. Made with care for Windows.</span><span>Not affiliated with Microsoft, Google or Anthropic.</span></div>
   </div>
 </footer>
 </body>

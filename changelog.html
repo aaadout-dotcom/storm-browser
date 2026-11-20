@@ -5,56 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Storm Changelog</title>
   <meta name="description" content="What's new in each Storm release.">
-  <meta name="theme-color" content="#0B1A33">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#0A0A0B">
+  <link rel="icon" href="trailer/icon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
   <script src="storm.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="site-header">
+<header class="topbar">
   <div class="wrap">
-    <a class="brand" href="index.html" aria-label="Storm home">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE8FF"/><stop offset="1" stop-color="#4FA8FF"/></linearGradient></defs><circle cx="16" cy="16" r="15" fill="#0B1A33" stroke="#4FA8FF" stroke-opacity=".5"/><path d="M18.5 4 9 18h6l-2.5 10L23 13h-6.2z" fill="url(#lg)"/></svg>
-      Storm
-    </a>
+    <a class="brand" href="index.html"><img src="trailer/icon.png" width="256" height="256" alt="">Storm</a>
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav"><span></span></button>
     <nav class="nav" id="nav">
       <a href="index.html#features">Features</a>
-      <a href="index.html#study">Study mode</a>
-      <a href="index.html#ai">Storm AI</a>
-      <a href="index.html#faq">FAQ</a>
+      <a href="pricing.html">Pricing</a>
       <a href="changelog.html" aria-current="page">Changelog</a>
-      <a class="btn btn-primary btn-sm" href="download.html">Download</a>
+      <a href="privacy.html">Privacy</a>
+      <a class="btn btn-sm" href="download.html">Download</a>
     </nav>
   </div>
 </header>
 <main id="main">
-  <section class="page-hero">
-    <canvas id="sky-sm" aria-hidden="true"></canvas>
+  <section class="page-head">
     <div class="wrap">
-      <span class="kicker">Changelog</span>
+      <span class="eyebrow">Changelog</span>
       <h1>What's new</h1>
-      <p>Every Storm release, newest first. Storm installs updates automatically.</p>
+      <p class="lede">Every Storm release, newest first. Storm updates itself, so you're always on the latest.</p>
     </div>
   </section>
 
-  <section class="content">
-    <div class="wrap prose">
-      <!-- Copy this <article> block for each new release and put it at the top. -->
+  <div class="wrap">
+    <div class="prose">
+      <!-- Copy an <article> block for each new release and put it at the top. -->
+      <article class="release" id="v1.1.0">
+        <h2>1.1.0 <time datetime="2026-11-18">November 18, 2026</time> <span class="tag">Latest</span></h2>
+        <p>A big one, with lots of things people asked for.</p>
+        <h3>New</h3>
+        <ul>
+          <li>A proper installer.</li>
+          <li>Password manager.</li>
+          <li>Tab groups and workspaces.</li>
+          <li>Split view.</li>
+          <li>Reader mode and picture-in-picture.</li>
+          <li>Download manager.</li>
+          <li>Crash recovery.</li>
+          <li>More AI tools in the Storm AI sidebar.</li>
+          <li>Extensions and shareable themes.</li>
+        </ul>
+      </article>
+
       <article class="release" id="v1.0.0">
-        <h2>1.0.0 <time datetime="2026-11-18">November 18, 2026</time> <span class="tag">First release</span></h2>
+        <h2>1.0.0 <time datetime="2026-11-18">November 18, 2026</time> <span class="tag" style="background:var(--sky);color:var(--sky-ink)">First release</span></h2>
         <p>The first public release of Storm.</p>
         <h3>Browsing</h3>
         <ul>
           <li>Tabs, bookmarks and history, built on Microsoft Edge WebView2.</li>
           <li>Stay signed in to Google, Discord and other sites.</li>
           <li>Import from Chrome, Edge, Firefox, Brave and Opera.</li>
-          <li>20 search engines with address-bar keyword shortcuts (e.g. <code>b cats</code>).</li>
+          <li>20 search engines with address-bar keyword shortcuts (for example <code>b cats</code>).</li>
           <li>Command palette with <kbd>Ctrl</kbd> + <kbd>K</kbd>.</li>
         </ul>
-        <h3>Look &amp; feel</h3>
+        <h3>Look and feel</h3>
         <ul>
           <li>Lightning-strike startup intro with procedural thunder, fully customizable.</li>
           <li>Video and image wallpapers, custom cursors.</li>
@@ -62,35 +77,35 @@
           <li>Built-in music player.</li>
           <li>Around 100 settings.</li>
         </ul>
-        <h3>Focus &amp; AI</h3>
+        <h3>Focus and AI</h3>
         <ul>
           <li>Study mode: Pomodoro timer, distracting-site blocking, AI quizzes and flashcards.</li>
           <li>Storm AI sidebar: free local AI on your GPU, or Claude with your own API key.</li>
         </ul>
-        <h3>Privacy &amp; safety</h3>
+        <h3>Privacy and safety</h3>
         <ul>
           <li>Ad and tracker blocking.</li>
-          <li>Tor-powered Secure tabs.</li>
           <li>Local data encrypted with Windows DPAPI. No telemetry.</li>
           <li>Content filters, lock settings and PIN-protected parental controls.</li>
           <li>Signed auto-updates.</li>
         </ul>
       </article>
     </div>
-  </section>
+  </div>
 </main>
-<footer class="site-footer">
+<footer class="footer">
   <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#0B1A33" stroke="#4FA8FF" stroke-opacity=".5"/><path d="M18.5 4 9 18h6l-2.5 10L23 13h-6.2z" fill="#9CD0FF"/></svg>Storm</a>
-        <p style="margin-top:12px">A fast, private browser for Windows.<br>Ride the lightning.</p>
-      </div>
-      <div><h4>Product</h4><ul><li><a href="download.html">Download</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="index.html#features">Features</a></li></ul></div>
-      <div><h4>Trust</h4><ul><li><a href="privacy.html">Privacy</a></li><li><a href="download.html#verify">Verify a download</a></li></ul></div>
-      <div><h4>Help</h4><ul><li><a href="index.html#faq">FAQ</a></li><li><a href="download.html#requirements">Requirements</a></li></ul></div>
+    <div class="foot">
+      <a class="brand" href="index.html"><img src="trailer/icon.png" width="256" height="256" alt="">Storm</a>
+      <ul>
+        <li><a href="download.html">Download</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="changelog.html">Changelog</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="trailer/index.html">Trailer</a></li>
+      </ul>
     </div>
-    <div class="foot-bottom"><span>© <span id="year">2026</span> Storm</span><span>Not affiliated with Microsoft, Google or Anthropic.</span></div>
+    <div class="foot-bottom"><span>&copy; <span id="year">2026</span> Storm. Made with care for Windows.</span><span>Not affiliated with Microsoft, Google or Anthropic.</span></div>
   </div>
 </footer>
 </body>

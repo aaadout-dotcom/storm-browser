@@ -1,31 +1,40 @@
 # Storm release website
 
-Static site for the Storm browser, plain HTML/CSS/JS, no build step, no dependencies, no cookies or analytics.
+Static site for the Storm browser, plain HTML/CSS/JS, no build step, no dependencies, no cookies or analytics (the font loads from Google Fonts).
 
 ```
 index.html          landing page
-download.html       download button, requirements, checksum
+download.html       download button, "thanks + 3 steps" screen, requirements, checksum
+pricing.html        paid add-ons (Rainshield, Mirage, RainProtection)
 privacy.html        privacy policy
 changelog.html      release notes
 updates/latest.json auto-updater manifest (read by the browser)
-config.js           ← download URL, version, size, SHA-256 (edit this per release)
-storm.js            rain/lightning canvas, nav, fills in values from config.js
+config.js           ← download URL, version, size, SHA-256 (edit per release) + STORM_BUY_BASE (checkout links)
+storm.js            fills in values from config.js, buy links, menu, download thank-you steps
 style.css           shared styles
 favicon.svg
-img/                put real screenshots here
+trailer/            trailer page, app icon and screenshots (used by the site)
 ```
 
 ## Shipping a release
 
-1. Build and sign `Storm-Setup.exe`, upload it somewhere (e.g. a GitHub Release asset).
+1. Build `Storm.exe`, upload it somewhere (e.g. a GitHub Release asset).
 2. Get its checksum: `Get-FileHash .\Storm-Setup.exe -Algorithm SHA256`
 3. Edit **`config.js`**, `downloadUrl`, `version`, `date`, `sha256` (and `sizeLabel` if you want it shown). Every download button and checksum on the site reads from this one file.
 4. Edit **`updates/latest.json`**, same `version`, `url`, `sha256`, plus the update `signature` and short `notes`. The browser's auto-updater reads this file at `https://<your-domain>/updates/latest.json`.
 5. Add a new `<article class="release">` block at the top of `changelog.html`.
 
-## Screenshots
+## Download flow
 
-The landing page has placeholder frames. Replace a `.shot` block's inner `.label` with `<img src="img/study.png" alt="…" style="width:100%;height:calc(100% - 34px);object-fit:cover">` (or drop the whole `.shot` and use an `<img>`). 16:10 images fit best.
+Download buttons on every page go to `download.html#thanks`, which starts the download and shows the "Thanks for downloading! Just a few steps left" cards (Open, Allow, Install). The button on the download page itself does the same.
+
+## Pricing links
+
+The "Get" buttons on `pricing.html` link to `STORM_BUY_BASE + "/rainshield"`, `"/mirage"` and `"/rainprotection"`. Change `STORM_BUY_BASE` in `config.js` to move checkout.
+
+## Look
+
+Black theme only (no light mode). Card colours are saturated and pass WCAG AA for their text. Font: Plus Jakarta Sans from Google Fonts (falls back to Segoe UI). Colors are CSS variables at the top of `style.css`.
 
 ## Hosting for free
 

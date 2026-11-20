@@ -223,9 +223,17 @@ function sceneTor(t) {                           // 23 – 28
   g.save(); g.globalAlpha = a;
   const glow = g.createRadialGradient(W / 2, 600, 50, W / 2, 600, 800); glow.addColorStop(0, 'rgba(91,42,134,.55)'); glow.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = glow; g.fillRect(0, 0, W, H); g.restore();
-  caption(t, 23, 28, '🧅 Secure tabs, powered by Tor.', 'Real onion routing. Your IP stays hidden. .onion sites just work.');
-  const nodes = [[260, 620, 'YOU'], [700, 480, 'relay'], [1060, 720, 'relay'], [1420, 520, 'relay'], [1700, 640, 'website']];
+  caption(t, 23, 28, '◈ Mirage VPN + ☔ Rainshield.', 'Hide your IP in one click. Every download scanned. Scam sites stopped cold.');
+  const nodes = [[360, 640, 'YOU'], [960, 520, 'MIRAGE'], [1560, 640, 'website']];
   g.save(); g.globalAlpha = a;
+  // a phishing site trying to get in, then blocked
+  const bp = seg(t, 25.4, 26.4);
+  if (bp > 0) {
+    const bx = 960, by = 880;
+    roundRect(bx - 260, by - 38, 520, 76, 38); g.fillStyle = `rgba(255,79,106,${.18 * Math.min(1, bp * 2)})`; g.fill();
+    g.strokeStyle = C.red; g.lineWidth = 2; g.stroke();
+    text('☔ Blocked: paypa1-login.com (phishing)', bx, by, 28, { color: '#FFD6DD', weight: 600, alpha: Math.min(1, bp * 2) });
+  }
   for (let i = 0; i < nodes.length - 1; i++) {
     const [x0, y0] = nodes[i], [x1, y1] = nodes[i + 1], p = ease(seg(t, 23.6 + i * .5, 24.2 + i * .5));
     g.strokeStyle = C.onion; g.lineWidth = 5; g.shadowColor = C.onion; g.shadowBlur = 20; g.setLineDash([16, 12]); g.lineDashOffset = -t * 60;
@@ -233,8 +241,8 @@ function sceneTor(t) {                           // 23 – 28
   }
   g.setLineDash([]); g.shadowBlur = 0;
   nodes.forEach(([x, y, l], i) => {
-    const p = ease(seg(t, 23.3 + i * .5, 23.8 + i * .5)), layers = Math.max(0, 3 - i);
-    for (let k = layers; k >= 0; k--) { g.beginPath(); g.arc(x, y, (38 + k * 16) * p, 0, Math.PI * 2); g.fillStyle = k === 0 ? (i === 0 ? C.accent : i === 4 ? '#fff' : C.onion) : `rgba(185,140,255,${.14 + .06 * k})`; g.fill(); }
+    const p = ease(seg(t, 23.3 + i * .5, 23.8 + i * .5)), layers = i === 1 ? 3 : 0;
+    for (let k = layers; k >= 0; k--) { g.beginPath(); g.arc(x, y, (38 + k * 16) * p, 0, Math.PI * 2); g.fillStyle = k === 0 ? (i === 0 ? C.accent : i === 2 ? '#fff' : C.onion) : `rgba(185,140,255,${.14 + .06 * k})`; g.fill(); }
     text(l, x, y + 100, 26, { color: C.sub, weight: 600, alpha: p, spacing: 3 });
   });
   g.restore();
